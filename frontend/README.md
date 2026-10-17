@@ -1,6 +1,6 @@
 # Interface React
 
-Interface básica para usar a API: formulários e listagens de donos, pets, reservas e espécies. Usa React, Vite e CSS comum, sem biblioteca visual, roteador ou gerenciador de estado adicional.
+Criei uma interface básica para consumir a API, com formulários e listagens de donos, pets, reservas e espécies. Usei React, Vite e CSS comum, sem biblioteca visual, roteador ou gerenciador de estado adicional.
 
 ## Executar
 
@@ -55,6 +55,6 @@ Usar banco isolado ou registros de demonstração para estas verificações:
 6. Consultar disponibilidade, conferir mensagens de falha da API e usar Atualizar dados para tentar novamente.
 7. Alternar seções com formulário preenchido, navegar por teclado e conferir a tabela em tela estreita.
 
-Esses fluxos foram conferidos em navegador com um schema PostgreSQL exclusivo, removido ao terminar. Não foi acrescentada uma suíte de testes de componentes; os testes automatizados do backend continuam cobrindo suas regras.
+Conferi esses fluxos no navegador com um schema PostgreSQL exclusivo e o removi ao terminar. Não acrescentei uma suíte de testes de componentes; mantive os testes automatizados do backend para suas regras.
 
 `pnpm test` executa um teste de regressão do cliente HTTP: resposta HTML no lugar de JSON deve gerar mensagem de erro, em vez de causar tela branca. Depois de trocar branches com o Vite aberto, reinicie o servidor e confira o navegador, pois a troca temporária dos arquivos de configuração pode afetar o encaminhamento da API.

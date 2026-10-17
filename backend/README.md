@@ -1,6 +1,6 @@
 # API PetzIn
 
-API com PostgreSQL: CRUD de donos e pets, espécies, canis, disponibilidade e reservas.
+Implementei a API com FastAPI e PostgreSQL para gerenciar donos, pets, espécies, canis e reservas, incluindo a consulta de disponibilidade.
 
 ## Executar no Windows
 
@@ -75,7 +75,7 @@ A disponibilidade é uma consulta do momento, não uma garantia de vaga até a c
 - `app/schemas.py`: validação de entrada e formatos de resposta.
 - `app/reservas.py`: rotas, validação de compartilhamento e conflitos, transações e cálculo da cobrança.
 
-Não há camadas de serviço ou repositórios genéricos. As regras de reserva estão em funções do próprio módulo. Consultas usam parâmetros do Psycopg; valores recebidos não são concatenados no SQL.
+Optei por manter as regras de reserva em funções do próprio módulo, sem criar camadas de serviço ou repositórios genéricos. Usei parâmetros do Psycopg nas consultas, sem concatenar os valores recebidos no SQL.
 
 ## Testes
 
@@ -85,7 +85,7 @@ Não há camadas de serviço ou repositórios genéricos. As regras de reserva e
 
 Esse comando executa os testes de banco e API. Os testes de API criam schemas exclusivos, aplicam a estrutura e removem seus schemas ao terminar. Usam registros fictícios, sem alterar os cadastros reais. Precisam de PostgreSQL acessível e permissão de criar schemas/extensão no banco local.
 
-O [guia dos testes](../tests/README.md) explica o propósito de cada grupo e os limites da cobertura. A suíte foi simplificada para priorizar fluxos completos e regras de integridade.
+O [guia dos testes](../tests/README.md) explica o propósito de cada grupo e os limites da cobertura. Simplifiquei a suíte para priorizar fluxos completos e regras de integridade.
 
 Os testes de IDs inválidos usam uma conexão propositalmente indisponível para verificar que a entrada é recusada antes de abrir a conexão. O teste de indisponibilidade usa o mesmo princípio para conferir a resposta 503.
 

@@ -1,6 +1,6 @@
 # Banco de dados PetzIn
 
-Requer PostgreSQL 18 e Python 3 para os testes. A aplicação usará Psycopg, mas estes testes chamam o cliente `psql` diretamente e não exigem dependências Python adicionais.
+Requer PostgreSQL 18 e Python 3 para os testes. Uso Psycopg na API, mas os testes de banco chamam o cliente `psql` diretamente e não exigem dependências Python adicionais.
 
 ## Aplicar a estrutura
 
@@ -14,11 +14,11 @@ O banco `petzin` deve existir. O comando pede senha, a menos que exista autentic
 
 `--single-transaction` confirma a aplicação inteira ou desfaz em caso de falha. `ON_ERROR_STOP` interrompe no primeiro erro.
 
-O script conserva a tabela Dono criada na mentoria. Objetos já existentes não são recriados, e sementes são incluídas sem duplicar os respectivos códigos/IDs. Isso permite repetir esta instalação inicial; não substitui migrações futuras de alteração de estrutura. Um objeto existente com estrutura incompatível exige investigação, não remoção automática.
+Preparei o script para preservar os cadastros existentes na tabela Dono. Objetos já existentes não são recriados, e sementes são incluídas sem duplicar os respectivos códigos/IDs. Isso permite repetir esta instalação inicial; não substitui migrações futuras de alteração de estrutura. Um objeto existente com estrutura incompatível exige investigação, não remoção automática.
 
 ### Atualizar quem já possuía id e numero em Canil
 
-O banco local desta mentoria já foi atualizado. Para outro banco com a estrutura antiga, execute primeiro:
+Se o banco ainda tiver a estrutura antiga, execute primeiro:
 
 ```powershell
 & 'C:\Program Files\PostgreSQL\18\bin\psql.exe' -X -h localhost -p 5432 -U postgres -d petzin -v ON_ERROR_STOP=1 --single-transaction -f database/002_simplificar_canil.sql
@@ -39,7 +39,7 @@ A atualização confere se os valores antigos de id e numero coincidem, remove n
 | reserva | Um canil, entrada/saída inclusivas, tarifa decimal aplicada e status ativa/cancelada. |
 | reserva_pet | Chave composta reserva/pet, sem repetição do vínculo. |
 
-Não usamos ID de espécie fixo no código da futura API. O código `cachorro` identifica essa espécie independentemente do nome de exibição ou do ID gerado no ambiente. Inclusão de outras espécies deverá produzir código único; alterações desse código não serão expostas pelo CRUD comum.
+Usei o código estável da espécie na regra de compartilhamento, sem depender de um ID fixo na API. O código `cachorro` identifica essa espécie independentemente do nome de exibição ou do ID gerado no ambiente. A API gera um código único para novas espécies; não incluí edição desse código nas operações comuns.
 
 Canil usa um único identificador porque não existe necessidade apresentada de renumerar a acomodação independentemente de suas referências. Essa simplificação não se aplica a nomes de donos ou pets, que não identificam unicamente seus registros.
 
@@ -78,7 +78,7 @@ O padrão de conexão é localhost, porta 5432, usuário postgres e banco petzin
 
 Os testes comuns criam um schema temporário dentro de uma transação e desfazem tudo ao terminar. O teste concorrente precisa de duas conexões: cria um schema exclusivo, confirma uma disputa real e remove esse schema ao final. Nenhum caso cadastra dados de demonstração nas tabelas reais da aplicação.
 
-O usuário dos testes precisa poder criar schemas e a extensão `btree_gist`. Em ambientes compartilhados, use banco de teste dedicado. O banco local de desenvolvimento desta mentoria usa postgres.
+O usuário dos testes precisa poder criar schemas e a extensão `btree_gist`. Em ambientes compartilhados, use banco de teste dedicado. Usei postgres no banco local de desenvolvimento.
 
 ## Decisões e limites
 

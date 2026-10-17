@@ -1,6 +1,6 @@
 # PetzIn
 
-Sistema simples para gerenciar donos, pets e reservas de hospedagem, desenvolvido para o desafio de Desenvolvedor Full Stack Jr da Conecthus.
+Desenvolvi o PetzIn para o desafio de Desenvolvedor Full Stack Jr da Conecthus. O sistema permite gerenciar donos, pets e reservas de hospedagem.
 
 ## Rodar com Docker
 
@@ -68,11 +68,11 @@ Se a interface não abrir, confira `docker compose ps`, os logs e se a porta esc
 
 ## Tecnologias
 
-- Python/FastAPI: API REST, validação e documentação automática; Python foi escolhido pela maior familiaridade do candidato.
-- PostgreSQL/Psycopg: SQL parametrizado, relacionamentos e transações explícitos, sem ORM.
-- React com JavaScript: componentes para formulários e listagens, consumindo a API com fetch.
-- Vite e CSS comum: desenvolvimento, build e estilo básico, sem biblioteca visual.
-- Docker Compose/Nginx: serviços locais; Nginx serve o build e encaminha /api ao backend.
+- Python/FastAPI: escolhi Python por ser a linguagem com que tenho mais familiaridade. Usei FastAPI para criar a API REST, validar entradas e disponibilizar a documentação das rotas.
+- PostgreSQL/Psycopg: escolhi um banco relacional para representar os vínculos e garantir a integridade dos dados. Usei SQL parametrizado, sem ORM, para deixar as consultas e transações explícitas.
+- React com JavaScript: organizei os formulários e listagens em componentes e usei fetch para consumir a API.
+- Vite e CSS comum: usei Vite para desenvolvimento e build. Mantive o estilo básico, sem biblioteca visual.
+- Docker Compose/Nginx: reuni os serviços no Compose para facilitar a execução local. Usei Nginx para servir o build e encaminhar /api ao backend.
 
 ```text
 backend/app/       API e regras de negócio
@@ -88,9 +88,9 @@ compose.yaml       serviços Docker
 
 O JSON mistura dono, pets e reserva em um registro. "Rex e Bolinha" e "Labrador e Poodle" são textos concatenados: cada animal não tem identidade própria, e associar nome à raça depende de interpretar esses textos.
 
-Se Carlos mudar de telefone, reservas que repetem esse telefone precisam ser atualizadas em vários lugares, podendo ficar inconsistentes. No modelo proposto, o telefone está em Dono e é atualizado uma vez; os pets continuam vinculados pelo ID.
+Se Carlos mudar de telefone, reservas que repetem esse telefone precisam ser atualizadas em vários lugares, podendo ficar inconsistentes. No modelo que adotei, o telefone está em Dono e é atualizado uma vez; os pets continuam vinculados pelo ID.
 
-Para consultar Rex individualmente, usamos o ID do pet. ReservaPet liga esse animal às reservas, sem depender do nome ou de quem foi hospedado junto. Se houvesse um histórico médico, cada registro clínico teria uma chave estrangeira pet_id, e a busca filtraria pelo ID do Rex. Assim, outro pet com o mesmo nome não misturaria os históricos. Essa relação descreve uma extensão do modelo; o desafio não especifica o cadastro de informações clínicas, que ficou fora da implementação.
+Para consultar Rex individualmente, uso o ID do pet. ReservaPet liga esse animal às reservas, sem depender do nome ou de quem foi hospedado junto. Se houvesse um histórico médico, cada registro clínico teria uma chave estrangeira pet_id, e a busca filtraria pelo ID do Rex. Assim, outro pet com o mesmo nome não misturaria os históricos. Essa relação descreve uma extensão do modelo; o desafio não especifica o cadastro de informações clínicas, que ficou fora da implementação.
 
 valor_total_pago mistura o cálculo da hospedagem com comprovação de pagamento. Aqui a reserva guarda a tarifa aplicada e calcula o total pelo período. Não há registro de recebimentos ou quitação.
 
@@ -113,7 +113,7 @@ Um pet pode participar de várias reservas ao longo do tempo. Cada reserva tem u
 
 - Existem 15 canis. Uma reserva usa um canil; dois canis correspondem a duas reservas.
 - Um canil recebe um pet ou até dois cachorros do mesmo dono. Outras espécies ficam individualmente. Mesmo dono representa mesma família nesta versão.
-- Datas inclusivas: entrada em 20/10 e saída em 22/10 são três diárias. Nova entrada nesse canil pode começar em 23/10. Não usamos horários.
+- Datas inclusivas: entrada em 20/10 e saída em 22/10 são três diárias. Nova entrada nesse canil pode começar em 23/10. Optei por trabalhar apenas com datas, sem horários.
 - R$ 50 por canil/dia como tarifa de demonstração. Dois cachorros compartilhando não dobram o preço. A reserva preserva sua tarifa após um aumento para novas reservas.
 - Editar datas recalcula o total com a tarifa original. Cancelar libera a vaga e mantém histórico; reserva cancelada não é editada nem reativada.
 - Um pet não pode ter reservas ativas sobrepostas, mesmo em canis diferentes. Um canil não pode ter ocupações sobrepostas.
@@ -121,7 +121,7 @@ Um pet pode participar de várias reservas ao longo do tempo. Cada reserva tem u
 - Telefone internacional obrigatório; nome e telefone do dono não são únicos. Raça desconhecida pode ficar vazia.
 - Espécies têm cadastro próprio; a unicidade evita grafias equivalentes, mas não reconhece sinônimos.
 
-Mesma família, contagem de diárias, uma reserva por canil, R$ 50 e políticas de alteração/cancelamento são interpretações ou decisões técnicas documentadas. O e-mail não define todos esses detalhes. Datas passadas são aceitas porque não há proibição no enunciado.
+Documentei as interpretações e decisões que adotei sobre família, contagem de diárias, uma reserva por canil, R$ 50 e políticas de alteração/cancelamento. O e-mail não define todos esses detalhes. Datas passadas são aceitas porque não há proibição no enunciado.
 
 ### Integridade e concorrência
 
@@ -151,7 +151,7 @@ Com ambiente Python de desenvolvimento e PostgreSQL local preparados:
 
 São 47 casos de banco/API, com schemas isolados e registros fictícios. Dentro de frontend, `pnpm test` confere a regressão de resposta inválida e `pnpm build` verifica o build. Consulte o [guia dos testes](tests/README.md) e a [conferência da entrega](docs/verificacao-entrega.md).
 
-Foram conferidos configuração Compose, build das imagens, subida com banco vazio, interface no navegador, integração com a API e preservação de registros após down/up. Os dados de teste foram mantidos em uma instalação Docker separada. A execução local sem Docker também foi verificada.
+Conferi a configuração Compose, o build das imagens, a subida com banco vazio, a interface no navegador, a integração com a API e a preservação de registros após down/up. Mantive os dados de teste em uma instalação Docker separada. Também conferi a execução local sem Docker.
 
 ## Limites
 
