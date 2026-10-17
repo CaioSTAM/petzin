@@ -39,5 +39,3 @@ def database(monkeypatch):
 def client():
     with TestClient(app) as instance:
         yield instance
-
-
