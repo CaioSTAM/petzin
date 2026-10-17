@@ -32,6 +32,18 @@ O banco é inicializado com cinco espécies e os 15 canis. Donos, pets e reserva
 
 O Docker usa um volume próprio, sem conectar ao PostgreSQL instalado na máquina. As portas 8080 e 8002 evitam as portas do desenvolvimento e podem ser alteradas por WEB_PORT e API_PORT no `.env`. O banco não publica porta no host.
 
+### Porta ocupada ou segunda cópia na mesma máquina
+
+Se já houver outra instalação em execução, escolha portas livres no `.env`. Para testar uma segunda cópia com banco e containers separados, defina também outro nome de projeto. Exemplo:
+
+```dotenv
+COMPOSE_PROJECT_NAME=petzin-copia
+WEB_PORT=8082
+API_PORT=8003
+```
+
+Mantenha DB_PASSWORD no arquivo e execute novamente `docker compose up --build -d --wait`. Nesse exemplo, a interface fica em http://localhost:8082 e a documentação em http://localhost:8003/docs. Troque esses valores se também estiverem ocupados. Só clonar em outra pasta não isola a instalação: o nome padrão do projeto é petzin.
+
 ### Parar, reiniciar e diagnosticar
 
 ```powershell
@@ -78,7 +90,7 @@ O JSON mistura dono, pets e reserva em um registro. "Rex e Bolinha" e "Labrador 
 
 Se Carlos mudar de telefone, reservas que repetem esse telefone precisam ser atualizadas em vários lugares, podendo ficar inconsistentes. No modelo proposto, o telefone está em Dono e é atualizado uma vez; os pets continuam vinculados pelo ID.
 
-Para consultar Rex individualmente, usamos o ID do pet. ReservaPet liga esse animal às reservas, sem depender do nome ou de quem foi hospedado junto. A pergunta sobre histórico médico demonstra essa necessidade de identidade; o desafio não especifica um módulo clínico, que ficou fora do escopo.
+Para consultar Rex individualmente, usamos o ID do pet. ReservaPet liga esse animal às reservas, sem depender do nome ou de quem foi hospedado junto. Se houvesse um histórico médico, cada registro clínico teria uma chave estrangeira pet_id, e a busca filtraria pelo ID do Rex. Assim, outro pet com o mesmo nome não misturaria os históricos. Essa relação descreve uma extensão do modelo; o desafio não especifica o cadastro de informações clínicas, que ficou fora da implementação.
 
 valor_total_pago mistura o cálculo da hospedagem com comprovação de pagamento. Aqui a reserva guarda a tarifa aplicada e calcula o total pelo período. Não há registro de recebimentos ou quitação.
 
@@ -94,6 +106,8 @@ valor_total_pago mistura o cálculo da hospedagem com comprovação de pagamento
 | ReservaPet | Liga pets e reservas; a chave composta impede repetir o vínculo. |
 
 O [SQL](database/001_estrutura.sql) apresenta chaves e restrições. As [decisões detalhadas](docs/requisitos-e-decisoes.md) registram dúvidas, suposições, motivos e limites.
+
+Um pet pode participar de várias reservas ao longo do tempo. Cada reserva tem um ou dois participantes identificados em ReservaPet e ocupa exatamente um canil. Os dados cadastrais não precisam ser repetidos a cada hospedagem.
 
 ## Regras adotadas
 
@@ -111,7 +125,7 @@ Mesma família, contagem de diárias, uma reserva por canil, R$ 50 e políticas 
 
 ### Integridade e concorrência
 
-Reserva e participantes são gravados na mesma transação. A API bloqueia os pets por ID em ordem fixa antes de verificar conflitos, impedindo confirmações simultâneas incompatíveis para o mesmo animal. Uma restrição de exclusão do PostgreSQL protege o período do canil.
+Reserva e participantes são gravados na mesma transação. A API bloqueia primeiro os canis envolvidos, em ordem de ID, e depois os pets, também em ordem fixa, antes de verificar conflitos. Isso faz gravações concorrentes aguardarem sua vez e evita confirmações incompatíveis. Uma restrição de exclusão do PostgreSQL protege o período do canil.
 
 A disponibilidade é uma consulta do momento; salvar valida novamente. Conflitos retornam 409, sem deixar alterações parciais. A regra do mesmo pet em canis distintos depende do fluxo da API; SQL manual não executa essa validação de negócio.
 

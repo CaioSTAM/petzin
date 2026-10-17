@@ -30,6 +30,7 @@ Fonte: PDF completo docs/desafio 3.pdf, incluindo o e-mail da cliente. Esta conf
 - Pelo Nginx, criados um dono, dois pets e uma reserva de três diárias, com total de R$ 150. Conflito de pet retornou 409; período invertido retornou 422; disponibilidade conferida. Build React aberto no navegador, exibindo a reserva sem erros de execução.
 - Após `down` sem remover volume e novo `up`, dono e reserva permaneceram. Cancelamento manteve histórico e liberou a vaga.
 - O repositório foi consultado pela API pública do GitHub: público, com main como branch padrão.
+- Na revisão final, um teste concorrente detectou impasse entre inserções na restrição de exclusão. A gravação passou a bloquear os canis em ordem de ID antes dos pets e da validação de conflitos. Após a correção, 47 testes passaram e os dois cenários concorrentes foram repetidos oito vezes, sem falhas. O teste do cliente HTTP e o build React também passaram.
 
 ## Ambiente Docker recuperado antes da validação
 

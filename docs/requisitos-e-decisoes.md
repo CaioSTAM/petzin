@@ -320,7 +320,9 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Cobrança:** tarifa de demonstração definida no backend e copiada para a reserva, sem receber preço do navegador. Alterar as datas recalcula o total com a tarifa original. Valores monetários usam Decimal e são enviados como texto com centavos. Datas passadas são aceitas, pois não houve regra da cliente proibindo cadastros retroativos.
 
-**Concorrência:** bloquear os pets por ID em ordem fixa antes de validar conflitos e gravar. Na edição, incluir os participantes anteriores e os novos nos bloqueios. A transação confirma reserva e vínculos juntos ou desfaz tudo. A restrição de exclusão do banco protege a ocupação do canil; a API verifica também conflito do mesmo pet em outro canil.
+**Concorrência:** bloquear primeiro os canis envolvidos por ID em ordem fixa, depois os pets, antes de validar conflitos e gravar. Na edição, incluir canil anterior/destino e participantes anteriores/novos. A transação confirma reserva e vínculos juntos ou desfaz tudo. A restrição de exclusão do banco protege a ocupação do canil; a API verifica também conflito do mesmo pet em outro canil.
+
+**Ajuste na revisão final:** um teste real de solicitações simultâneas encontrou um impasse entre dois INSERTs na restrição de exclusão. Uma resposta saiu como 503, embora não houvesse queda do banco. O bloqueio ordenado dos canis foi acrescentado para evitar essa disputa antes de chegar ao índice e permitir a revalidação com retorno 409. Datas diferentes do mesmo canil também aguardam durante essa transação curta; aceitamos esse custo para o hotel de 15 canis.
 
 **Motivo:** evitar gravação parcial e impedir que duas requisições confirmem hospedagens incompatíveis. A consulta de disponibilidade é informativa; a gravação precisa validar novamente.
 

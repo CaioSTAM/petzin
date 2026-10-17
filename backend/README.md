@@ -65,7 +65,7 @@ A tarifa de novas reservas fica em TARIFA_DIARIA, no módulo reservas.py, inicia
 
 DELETE cancela e libera a ocupação; não apaga os vínculos com pets. Repetir o cancelamento retorna 204. Não há reativação nem edição de reserva cancelada; uma nova hospedagem exige nova reserva.
 
-A disponibilidade é uma consulta do momento, não uma garantia de vaga até a confirmação. Ao gravar, a API verifica novamente os conflitos. A transação bloqueia os pets em ordem de ID e grava reserva e vínculos juntos. A restrição de exclusão do PostgreSQL protege o canil contra sobreposição mesmo com solicitações concorrentes. O mesmo pet também não pode ocupar reservas ativas simultâneas em canis diferentes.
+A disponibilidade é uma consulta do momento, não uma garantia de vaga até a confirmação. Ao gravar, a API verifica novamente os conflitos. A transação bloqueia primeiro os canis envolvidos, em ordem de ID, depois os pets, também em ordem de ID, e grava reserva e vínculos juntos. Na edição, inclui o canil anterior e o destino. O bloqueio do canil evita impasses entre inserções concorrentes na restrição de exclusão; essa restrição permanece como proteção de integridade do banco. O mesmo pet também não pode ocupar reservas ativas simultâneas em canis diferentes.
 
 ## Organização
 

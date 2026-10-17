@@ -28,8 +28,14 @@ def buscar(connection, reserva_id, bloquear=False):
     return reserva
 
 
-def validar_reserva(connection, dados, reserva_id=0, pets_anteriores=()):
-    if connection.execute("SELECT id FROM canil WHERE id=%s", (dados.canil_id,)).fetchone() is None:
+def validar_reserva(connection, dados, reserva_id=0, pets_anteriores=(), canil_anterior=None):
+    canil_ids = sorted({dados.canil_id} | ({canil_anterior} if canil_anterior is not None else set()))
+    # Serializa gravações do mesmo canil antes da verificação de ocupação.
+    # O bloqueio também evita impasses entre inserções na restrição de exclusão.
+    canis = connection.execute(
+        "SELECT id FROM canil WHERE id=ANY(%s) ORDER BY id FOR NO KEY UPDATE", (canil_ids,),
+    ).fetchall()
+    if not any(canil["id"] == dados.canil_id for canil in canis):
         raise HTTPException(status_code=404, detail="Canil não encontrado.")
     # Uma ordem fixa evita que duas alterações bloqueiem os mesmos pets em ordem inversa.
     ids = sorted(set(dados.pet_ids) | set(pets_anteriores))
@@ -95,7 +101,7 @@ def atualizar_reserva(reserva_id: IdPath, dados: ReservaInput):
         atual = buscar(connection, reserva_id, bloquear=True)
         if atual["status"] == "cancelada":
             raise HTTPException(status_code=409, detail="Reserva cancelada não pode ser alterada.")
-        validar_reserva(connection, dados, reserva_id, atual["pet_ids"])
+        validar_reserva(connection, dados, reserva_id, atual["pet_ids"], atual["canil_id"])
         connection.execute(
             "UPDATE reserva SET canil_id=%s, data_entrada=%s, data_saida=%s WHERE id=%s",
             (dados.canil_id, dados.data_entrada, dados.data_saida, reserva_id),
