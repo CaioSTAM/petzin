@@ -29,7 +29,7 @@ pnpm build
 pnpm preview
 ```
 
-O build fica em dist. O preview é uma conferência local e também encaminha /api ao backend. Servir dist em outro servidor exige configurar esse encaminhamento; Docker será preparado no próximo bloco.
+O build fica em dist. O preview é uma conferência local e também encaminha /api ao backend. Na execução Docker, o Nginx serve esse build e encaminha /api; siga o README da raiz para iniciar os três serviços.
 
 ## Organização
 

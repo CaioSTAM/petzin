@@ -62,8 +62,20 @@ Escopo: consumir a API existente com formulários e listagens, sem design elabor
 - Campos nativos, seleção de dono/espécie/canil, mensagens de erro e confirmação inline.
 - Conferência em navegador com schema isolado, largura de celular, teclado e recuperação de erro; build e suíte do backend antes de integrar à main.
 
+## Bloco 5 — Docker e entrega
+
+Escopo autorizado: compor banco, API e interface, inicializar banco vazio, documentar instalação e conferir requisitos do PDF completo.
+
+1. Compose com PostgreSQL 18, API Python e build React servido por Nginx; banco em volume separado do PostgreSQL local.
+2. Aplicar 001_estrutura.sql somente na inicialização do volume; aguardar saúde do banco e da API antes dos serviços dependentes.
+3. Usar .env fora do Git, exemplo público sem credencial real, API em 8002 e interface em 8080 para evitar as portas do desenvolvimento.
+4. Validar configuração, build e subida limpa; conferir interface/API e persistência após reiniciar. Se o Docker não iniciar na máquina, registrar o impedimento exato sem alegar validação de containers.
+5. Completar README, análise do modelo original, mapa de requisitos e limites; executar verificações disponíveis e revisão antes do merge.
+
+Resultado: configuração, build de imagens, inicialização de volume vazio, fluxo por Nginx/API e persistência após down/up verificados. Os 47 testes de banco/API, teste do cliente HTTP e build React passaram. Docker Desktop foi recuperado sem apagar discos após falhar na inicialização. A conferência detalhada está em verificacao-entrega.md.
+
 ## Blocos seguintes
 
-1. Docker, execução limpa, README final, revisão, Git e publicação no repositório público.
+1. Estudar o fluxo completo e as decisões para apresentação do candidato.
 
 Cada bloco deverá ter verificações proporcionais, explicação curta e registro de decisões. Não afirmar que o projeto inteiro está pronto enquanto houver blocos pendentes. Publicação no repositório depende de identificar a conta e o destino corretos.

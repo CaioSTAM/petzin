@@ -1,0 +1,46 @@
+name: petzin
+
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: petzin
+      POSTGRES_USER: petzin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Copie .env.example para .env e defina DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./database/001_estrutura.sql:/docker-entrypoint-initdb.d/001_estrutura.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+      start_period: 10s
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: host=db port=5432 dbname=petzin user=petzin connect_timeout=5
+      PGPASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env}
+    ports:
+      - "127.0.0.1:${API_PORT:-8002}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 10
+      start_period: 5s
+
+  web:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

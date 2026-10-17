@@ -344,6 +344,18 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Status:** escopo solicitado e implementado em 17/10/2026. Fluxos conferidos no navegador com dados isolados, além do build da interface e dos testes do backend.
 
+### 21. Execução por Docker
+
+**Escolha:** três serviços Compose: PostgreSQL 18, API Python e build React servido pelo Nginx. Banco em volume próprio, sem publicar sua porta e sem usar os dados do PostgreSQL local. Interface em 8080 e API em 8002, vinculadas a 127.0.0.1 para demonstração local.
+
+**Inicialização:** aplicar 001_estrutura.sql ao criar um volume vazio. Aguardar banco e API saudáveis antes dos dependentes. PostgreSQL 18 usa o volume em /var/lib/postgresql. Senha fornecida por .env fora do Git; .env.example contém somente exemplo local.
+
+**Motivo:** permitir executar o projeto inteiro sem instalar cada runtime no host, preservando o ambiente local e as mesmas regras da aplicação.
+
+**Trade-offs:** mudar senha no .env não altera um banco já inicializado; o script inicial também não substitui migrações futuras. Remover volumes apaga os dados Docker. /health é liveness, não consulta ao banco. Não há configuração de produção pública, TLS ou autenticação.
+
+**Verificação:** implementação e limitações de execução registradas em verificacao-entrega.md; configuração validada não equivale a containers executados.
+
 ## Pontos para consolidar antes das respectivas implementações
 
 
