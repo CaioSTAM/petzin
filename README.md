@@ -4,7 +4,7 @@ Projeto de um sistema de hospedagem para animais, desenvolvido durante um desafi
 
 ## Estado atual
 
-A estrutura PostgreSQL e o primeiro bloco da API FastAPI estão implementados: consulta de donos por lista e ID. CRUD completo, regras de reservas, interface React e configuração Docker ainda estão em desenvolvimento.
+A estrutura PostgreSQL e os cadastros da API FastAPI estão implementados: CRUD de donos e pets, consulta/cadastro de espécies e listagem de canis. Regras de reservas, interface React e configuração Docker ainda estão em desenvolvimento.
 
 ## Tecnologias escolhidas
 
@@ -40,6 +40,6 @@ Não versionar senhas, arquivo pgpass ou backups locais.
 
 ## Próximas etapas
 
-Para instalar, executar e testar o primeiro bloco da API, consulte [backend/README.md](backend/README.md). A documentação interativa fica em http://127.0.0.1:8000/docs quando a API estiver em execução.
+Para instalar, executar e testar a API, consulte [backend/README.md](backend/README.md). A documentação interativa fica em http://127.0.0.1:8000/docs quando a API estiver em execução.
 
-Próximos blocos: completar o CRUD e as regras restantes na API, integrar os formulários React, acrescentar Docker e completar aqui as instruções de execução do projeto inteiro.
+Próximos blocos: implementar reservas na API, integrar os formulários React, acrescentar Docker e completar aqui as instruções de execução do projeto inteiro.

@@ -286,11 +286,23 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Status:** repositório e commits autorizados pelo candidato em 17/10/2026. Sem alteração artificial de datas do histórico.
 
+### 17. Validação e alterações dos cadastros
+
+**Dúvidas:** qual formato de telefone aceitar? Como gerar códigos de espécies? Permitir trocar dono ou espécie de um pet que já participou de reservas?
+
+**Escolhas:** telefone internacional com + e 8 a 15 algarismos, removendo espaços, parênteses, pontos e hífens. Código de espécie derivado do nome, sem acentos e com separadores padronizados; colisões de nome ou código retornam conflito. PUT recebe todos os campos obrigatórios. Raça vazia é salva como null. Nomes vazios, caracteres nulos e campos desconhecidos são recusados.
+
+**Motivos:** ter dados previsíveis para consultas e formulários; responder com erro de entrada em vez de falha interna; manter o código de espécie estável para as regras de compartilhamento.
+
+**Histórico:** pet vinculado a qualquer reserva, inclusive cancelada, não pode trocar dono ou espécie. Nome e raça podem ser corrigidos. Exclusão de dono com pets ou pet com reservas retorna conflito.
+
+**Trade-offs:** a validação de telefone verifica formato, não existência. Códigos normalizados não detectam sinônimos. Bloquear alterações de vínculo com histórico é uma escolha conservadora desta versão, que não implementa transferência de propriedade nem versões históricas dos cadastros.
+
+**Status:** decisões técnicas aplicadas na API em 17/10/2026, sem representar novos requisitos confirmados pela cliente.
+
 ## Pontos para consolidar antes das respectivas implementações
 
 - Confirmar o uso interno antes de desenhar fluxos de acesso; não acrescentar autenticação silenciosamente.
-- Formato aceito para telefone e geração de códigos ao cadastrar novas espécies pela API.
-- Regras para alterar cadastros vinculados a reservas existentes.
 - Estratégia de concorrência para impedir que o mesmo pet seja reservado em canis diferentes.
 - Tratamento de reservas em datas passadas: o enunciado não definiu restrição; não criar essa proibição silenciosamente.
 

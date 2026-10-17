@@ -1,6 +1,6 @@
 # API PetzIn
 
-Primeiro bloco: consulta de donos com dados reais do PostgreSQL. Cadastro, edição, exclusão, pets e reservas ainda serão acrescentados.
+API de cadastros com PostgreSQL: CRUD de donos e pets, consulta e cadastro de espécies e listagem de canis. Reservas serão acrescentadas no próximo bloco.
 
 ## Executar no Windows
 
@@ -25,14 +25,30 @@ Por padrão, a conexão usa localhost, porta 5432, banco petzin e usuário postg
 | GET /health | Confirma que a API está respondendo; não verifica o banco. |
 | GET /api/donos | Lista donos por ID. |
 | GET /api/donos/{dono_id} | Consulta um dono com ID inteiro positivo. |
+| POST /api/donos | Cadastra dono com nome e telefone. |
+| PUT /api/donos/{dono_id} | Substitui nome e telefone do dono. |
+| DELETE /api/donos/{dono_id} | Exclui dono sem pets vinculados. |
+| GET /api/pets | Lista pets; aceita filtro opcional dono_id. |
+| GET /api/pets/{pet_id} | Consulta um pet. |
+| POST /api/pets | Cadastra pet com nome, dono_id, especie_id e raça opcional. |
+| PUT /api/pets/{pet_id} | Substitui os campos editáveis do pet. |
+| DELETE /api/pets/{pet_id} | Exclui pet sem reservas vinculadas. |
+| GET /api/especies | Lista as espécies cadastradas. |
+| POST /api/especies | Cadastra espécie pelo nome, gerando código estável. |
+| GET /api/canis | Lista os 15 canis. |
 
-Retornos: 200 para consulta válida, 404 quando o dono não existe, 422 para ID inválido e 503 quando a conexão com o banco está indisponível. Não expor mensagens internas de conexão ao usuário.
+Retornos: 200 para consulta/atualização, 201 para criação, 204 para exclusão, 404 para recurso ausente, 409 para conflito de integridade, 422 para entrada inválida e 503 para conexão indisponível. Mensagens internas do banco não são expostas.
+
+PUT recebe todos os campos obrigatórios. Nomes têm espaços externos removidos; campos desconhecidos e caracteres nulos são rejeitados. Telefone usa + e 8 a 15 algarismos, incluindo país e DDD; separadores comuns são removidos. A validação confere o formato, não a existência do número. Raça vazia vira null.
+
+Espécies com nome ou código equivalente são recusadas. Sinônimos exigem cuidado no cadastro. Pet com histórico de reserva pode corrigir nome e raça, mas não trocar dono ou espécie, preservando as regras de compartilhamento.
 
 ## Organização
 
 - `app/main.py`: inicia a aplicação, registra as rotas e trata indisponibilidade do banco.
 - `app/database.py`: abre conexão; usada com `with` para fechar e confirmar/desfazer a transação automaticamente.
-- `app/donos.py`: rotas e consultas SQL simples de donos, com formato de resposta definido.
+- `app/donos.py`, `pets.py`, `especies.py` e `canis.py`: rotas e SQL parametrizado por recurso.
+- `app/schemas.py`: validação de entrada e formatos de resposta.
 
 Neste bloco, não há camadas de serviço ou repositórios genéricos. Regras complexas de reserva serão separadas quando forem implementadas. A consulta por ID usa parâmetros do Psycopg; o valor recebido não é concatenado no SQL.
 
