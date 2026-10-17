@@ -1,0 +1,38 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: white; color: #222; font: 16px Arial, sans-serif; }
+main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+h1 { margin-bottom: 8px; }
+h2 { margin-top: 24px; }
+p { line-height: 1.5; }
+button, input, select { font: inherit; }
+button { padding: 7px 12px; border: 1px solid #777; border-radius: 3px; background: #f4f4f4; color: #222; cursor: pointer; }
+button:hover:not(:disabled) { background: #e5e5e5; }
+button:disabled { cursor: default; opacity: .6; }
+button[type="submit"], button[aria-current="page"] { background: #185a9d; color: white; border-color: #185a9d; }
+button[type="submit"]:hover:not(:disabled), button[aria-current="page"]:hover:not(:disabled) { background: #12477d; }
+:focus-visible { outline: 3px solid #185a9d; outline-offset: 2px; }
+nav, .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+nav { margin: 20px 0; }
+form { padding: 16px; border: 1px solid #ccc; margin-bottom: 24px; }
+.fields { display: flex; flex-wrap: wrap; gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; max-width: 100%; width: 280px; margin-bottom: 16px; }
+input:not([type="checkbox"]), select { width: 100%; padding: 8px; border: 1px solid #777; border-radius: 2px; background: white; color: #222; }
+fieldset { margin: 0 0 16px; border: 1px solid #bbb; }
+.checkbox { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+.actions { margin-top: 8px; }
+.confirmation { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.confirmation > span { flex-basis: 100%; }
+.error { color: #9c1c1c; background: #fff0f0; padding: 12px; border: 1px solid #d9aaaa; overflow-wrap: anywhere; }
+.success { color: #165c2d; background: #eef9f0; padding: 12px; border: 1px solid #a2c8ad; }
+.refresh { margin-bottom: 16px; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 760px; }
+th, td { text-align: left; padding: 10px; border: 1px solid #ccc; vertical-align: top; overflow-wrap: anywhere; }
+th { background: #f4f4f4; white-space: nowrap; }
+td.actions { display: table-cell; min-width: 180px; }
+td.actions > button { margin-right: 8px; margin-bottom: 8px; }
+@media (max-width: 600px) {
+  main { padding: 12px; }
+  .field { width: 100%; }
+  form { padding: 12px; }
+}

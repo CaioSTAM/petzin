@@ -328,9 +328,24 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Status:** decisões técnicas aplicadas em 17/10/2026, mantendo uma reserva por canil e as datas inclusivas já acordadas.
 
+### 20. Interface React básica
+
+**Pedido:** consumir a API com uma interface simples, sem foco em design elaborado nem técnicas avançadas de React.
+
+**Escolhas:** React com JavaScript, Vite e CSS comum. Seções para donos, pets, reservas e espécies, com formulários e tabelas. Campos, selects e calendários nativos. Espécies divididas em Cachorro, Gato e Outros; a última opção revela outra seleção com as espécies restantes. Novas espécies são cadastradas em sua própria seção.
+
+**Motivo:** permitir demonstrar os fluxos completos com poucos conceitos: componentes, estado, efeitos, eventos e fetch. Sem biblioteca visual, roteamento adicional, gráficos ou autenticação.
+
+**Comportamento:** manter formulários montados entre seções para preservar rascunhos; bloquear botões enquanto salva; confirmar exclusão/cancelamento inline e mostrar erros da API. Um recarregamento completo da página descarta rascunhos. Atualizar dados busca as listas novamente, sem atualização automática por intervalo.
+
+**Integração:** Vite encaminha /api ao backend durante desenvolvimento e preview local. A consulta de disponibilidade informa vagas do período; salvar sempre revalida no servidor. Ao editar, a consulta considera também a ocupação da própria reserva atual.
+
+**Trade-offs:** sem busca personalizada de espécies, paginação ou estado persistido no navegador nesta versão. Select nativo permite navegação pelo teclado. A validação HTML melhora o preenchimento básico, mas as regras e os preços continuam sob responsabilidade da API.
+
+**Status:** escopo solicitado e implementado em 17/10/2026. Fluxos conferidos no navegador com dados isolados, além do build da interface e dos testes do backend.
+
 ## Pontos para consolidar antes das respectivas implementações
 
-- Confirmar o uso interno antes de desenhar fluxos de acesso; não acrescentar autenticação silenciosamente.
 
 ## Verificações de maior valor
 

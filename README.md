@@ -4,7 +4,7 @@ Projeto de um sistema de hospedagem para animais, desenvolvido durante um desafi
 
 ## Estado atual
 
-A estrutura PostgreSQL e a API FastAPI estão implementadas: cadastros, reservas, disponibilidade, cobrança e cancelamento. Interface React e configuração Docker ainda estão em desenvolvimento.
+A estrutura PostgreSQL, a API FastAPI e a interface React estão implementadas: cadastros, reservas, disponibilidade, cobrança e cancelamento. Configuração Docker ainda está em desenvolvimento.
 
 ## Tecnologias escolhidas
 
@@ -12,6 +12,7 @@ A estrutura PostgreSQL e a API FastAPI estão implementadas: cadastros, reservas
 - Python e FastAPI para a API, aproveitando a familiaridade do candidato com Python.
 - SQL parametrizado com Psycopg para tornar consultas, relacionamentos e transações explícitos.
 - PostgreSQL para persistência e garantias de integridade.
+- Vite para desenvolvimento e build da interface.
 - Docker previsto para execução reproduzível após o funcionamento local.
 
 ## Análise do modelo original
@@ -42,4 +43,6 @@ Não versionar senhas, arquivo pgpass ou backups locais.
 
 Para instalar, executar e testar a API, consulte [backend/README.md](backend/README.md). A documentação interativa fica em http://127.0.0.1:8000/docs quando a API estiver em execução.
 
-Próximos blocos: integrar os formulários React, acrescentar Docker e completar aqui as instruções de execução do projeto inteiro.
+Para instalar e executar a interface, consulte [frontend/README.md](frontend/README.md). Com a API e o Vite iniciados, abra http://127.0.0.1:5173. A interface usa campos e tabelas simples, com validação das regras pela API.
+
+Próximo bloco: acrescentar Docker e conferir a execução completa a partir de uma instalação limpa.

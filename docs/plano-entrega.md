@@ -53,9 +53,17 @@ Revisão prioritária: mesmo pet em canis diferentes, conflito na edição sem a
 
 Verificação: 47 testes aprovados, incluindo 12 novos casos de reservas. Revisão do código sem impedimentos. HTTP local conferido para listagem, documentação, disponibilidade e período invertido (422). Cadastros reais preservados e schemas de teste removidos.
 
+## Bloco 4 — Interface React simples
+
+Escopo: consumir a API existente com formulários e listagens, sem design elaborado e sem iniciar Docker.
+
+- Componentes por recurso, fetch centralizado, campos e tabelas compartilhados.
+- Cadastro/edição/exclusão de donos e pets; cadastro de espécies; criação/edição/cancelamento de reservas e disponibilidade.
+- Campos nativos, seleção de dono/espécie/canil, mensagens de erro e confirmação inline.
+- Conferência em navegador com schema isolado, largura de celular, teclado e recuperação de erro; build e suíte do backend antes de integrar à main.
+
 ## Blocos seguintes
 
-1. Frontend React simples, componentes e estados de carregamento/erro, integrado à API.
-2. Docker, execução limpa, README final, revisão, Git e publicação dos próximos blocos no repositório público.
+1. Docker, execução limpa, README final, revisão, Git e publicação no repositório público.
 
 Cada bloco deverá ter verificações proporcionais, explicação curta e registro de decisões. Não afirmar que o projeto inteiro está pronto enquanto houver blocos pendentes. Publicação no repositório depende de identificar a conta e o destino corretos.
