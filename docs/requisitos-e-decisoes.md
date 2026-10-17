@@ -312,11 +312,25 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Status:** simplificação solicitada pelo candidato em 17/10/2026. A suíte passou de 59 para 35 casos executados; as contagens anteriores neste documento registram verificações históricas.
 
+### 19. Operações e concorrência das reservas
+
+**Dúvidas:** como tratar cancelamento, edição, aumento de tarifa e duas solicitações simultâneas para o mesmo pet em canis diferentes?
+
+**Escolhas:** POST cria reserva ativa; PUT substitui canil, datas e participantes de reserva ativa; DELETE cancela sem apagar a reserva nem seus vínculos. Cancelamento repetido é aceito. Reserva cancelada não pode ser editada ou reativada. Uma nova hospedagem exige nova reserva.
+
+**Cobrança:** tarifa de demonstração definida no backend e copiada para a reserva, sem receber preço do navegador. Alterar as datas recalcula o total com a tarifa original. Valores monetários usam Decimal e são enviados como texto com centavos. Datas passadas são aceitas, pois não houve regra da cliente proibindo cadastros retroativos.
+
+**Concorrência:** bloquear os pets por ID em ordem fixa antes de validar conflitos e gravar. Na edição, incluir os participantes anteriores e os novos nos bloqueios. A transação confirma reserva e vínculos juntos ou desfaz tudo. A restrição de exclusão do banco protege a ocupação do canil; a API verifica também conflito do mesmo pet em outro canil.
+
+**Motivo:** evitar gravação parcial e impedir que duas requisições confirmem hospedagens incompatíveis. A consulta de disponibilidade é informativa; a gravação precisa validar novamente.
+
+**Trade-offs:** uma operação concorrente pode aguardar a outra e depois receber 409. A garantia para o mesmo pet depende de as gravações seguirem o fluxo da API; alterações SQL diretas não executam essas regras. Não há auditoria das versões anteriores de uma reserva editada, nem controle de pagamentos.
+
+**Status:** decisões técnicas aplicadas em 17/10/2026, mantendo uma reserva por canil e as datas inclusivas já acordadas.
+
 ## Pontos para consolidar antes das respectivas implementações
 
 - Confirmar o uso interno antes de desenhar fluxos de acesso; não acrescentar autenticação silenciosamente.
-- Estratégia de concorrência para impedir que o mesmo pet seja reservado em canis diferentes.
-- Tratamento de reservas em datas passadas: o enunciado não definiu restrição; não criar essa proibição silenciosamente.
 
 ## Verificações de maior valor
 

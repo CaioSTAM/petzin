@@ -1,8 +1,10 @@
 import re
+from datetime import date
+from decimal import Decimal
 from typing import Annotated
 
 from fastapi import Path
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 Texto = Annotated[str, Field(min_length=1)]
@@ -74,3 +76,38 @@ class EspecieResponse(BaseModel):
 
 class CanilResponse(BaseModel):
     id: int
+
+
+class Periodo(Entrada):
+    data_entrada: date
+    data_saida: date
+
+    @model_validator(mode="after")
+    def datas_em_ordem(self):
+        if self.data_saida < self.data_entrada:
+            raise ValueError("A saída deve ser igual ou posterior à entrada.")
+        return self
+
+
+class ReservaInput(Periodo):
+    canil_id: Identificador
+    pet_ids: Annotated[list[Identificador], Field(min_length=1, max_length=2)]
+
+    @field_validator("pet_ids")
+    @classmethod
+    def pets_sem_repeticao(cls, value):
+        if len(set(value)) != len(value):
+            raise ValueError("Um pet não pode aparecer duas vezes na mesma reserva.")
+        return value
+
+
+class ReservaResponse(BaseModel):
+    id: int
+    canil_id: int
+    data_entrada: date
+    data_saida: date
+    pet_ids: list[int]
+    status: str
+    tarifa_diaria: Decimal
+    diarias: int
+    valor_total: Decimal

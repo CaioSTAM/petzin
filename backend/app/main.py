@@ -6,6 +6,7 @@ from app.donos import router as donos_router
 from app.pets import router as pets_router
 from app.especies import router as especies_router
 from app.canis import router as canis_router
+from app.reservas import router as reservas_router
 
 
 app = FastAPI(title="PetzIn")
@@ -13,11 +14,14 @@ app.include_router(donos_router)
 app.include_router(pets_router)
 app.include_router(especies_router)
 app.include_router(canis_router)
+app.include_router(reservas_router)
 
 
 @app.exception_handler(psycopg.IntegrityError)
 def integrity_conflict(request, exception):
-    if isinstance(exception, psycopg.errors.UniqueViolation):
+    if isinstance(exception, psycopg.errors.ExclusionViolation):
+        detail = "Canil já reservado nesse período."
+    elif isinstance(exception, psycopg.errors.UniqueViolation):
         detail = "Já existe um cadastro com esse nome ou código equivalente."
     elif isinstance(exception, (psycopg.errors.ForeignKeyViolation, psycopg.errors.RestrictViolation)):
         detail = "Operação não permitida: o cadastro possui vínculos ou a referência não existe."

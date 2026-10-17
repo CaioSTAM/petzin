@@ -39,10 +39,23 @@ Escolhas: PUT recebe a representação completa editável; telefone internaciona
 
 Verificação: 59 testes aprovados, com PostgreSQL em schemas isolados. Revisão identificou um caractere de texto que causava erro interno; entrada passou a ser recusada com 422, coberta por quatro testes de regressão. Aplicação reiniciada e rotas conferidas por HTTP.
 
+## Bloco 3 — Reservas
+
+Escopo autorizado: CRUD de reservas e disponibilidade, sem iniciar React ou Docker. Usar os seis modelos existentes; não alterar o schema do banco.
+
+1. Escrever testes do ciclo completo, datas inclusivas, compartilhamento inválido, referências, rollback e concorrência canil/pet; observar as falhas antes de implementar.
+2. Acrescentar Periodo, ReservaInput e ReservaResponse em schemas.py. Datas em ordem, um ou dois pets distintos; dinheiro em Decimal.
+3. Implementar reservas.py: consultas, transação de criação/edição, bloqueio ordenado dos pets, revalidação de conflitos, cancelamento com histórico e tarifa preservada.
+4. Acrescentar GET /api/canis/disponiveis com datas e registrar o router de reservas. Retornar 409 para conflito de ocupação do banco.
+5. Conferir suíte completa e HTTP local, revisar, corrigir, documentar e integrar à main sem PR.
+
+Revisão prioritária: mesmo pet em canis diferentes, conflito na edição sem alteração parcial, preservação da tarifa após aumento e cancelamento liberando vaga sem apagar histórico.
+
+Verificação: 47 testes aprovados, incluindo 12 novos casos de reservas. Revisão do código sem impedimentos. HTTP local conferido para listagem, documentação, disponibilidade e período invertido (422). Cadastros reais preservados e schemas de teste removidos.
+
 ## Blocos seguintes
 
-1. Reservas: CRUD, disponibilidade, compartilhamento, transação, proteção concorrente do pet e cobrança.
-2. Frontend React simples, componentes e estados de carregamento/erro, integrado à API.
-3. Docker, execução limpa, README final, revisão, Git e publicação dos próximos blocos no repositório público.
+1. Frontend React simples, componentes e estados de carregamento/erro, integrado à API.
+2. Docker, execução limpa, README final, revisão, Git e publicação dos próximos blocos no repositório público.
 
 Cada bloco deverá ter verificações proporcionais, explicação curta e registro de decisões. Não afirmar que o projeto inteiro está pronto enquanto houver blocos pendentes. Publicação no repositório depende de identificar a conta e o destino corretos.

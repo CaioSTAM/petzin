@@ -56,7 +56,7 @@ Canil usa um único identificador porque não existe necessidade apresentada de 
 
 A proteção de período usa a extensão `btree_gist` e uma restrição `EXCLUDE`: considera o mesmo canil e a interseção dos intervalos de datas. As extremidades são inclusivas. Uma saída em 22/10 conflita com outra entrada em 22/10; entrada em 23/10 é permitida.
 
-## Regras que ainda pertencem à futura API
+## Regras implementadas na API
 
 - Exigir um pet ou dois cachorros do mesmo dono na reserva.
 - Impedir que o mesmo pet participe de hospedagens ativas sobrepostas, mesmo em canis diferentes, inclusive em solicitações simultâneas.
@@ -66,7 +66,7 @@ A proteção de período usa a extensão `btree_gist` e uma restrição `EXCLUDE
 - Cancelar logicamente pela operação de exclusão da API, preservando histórico. A exclusão física de uma reserva remove somente seus vínculos em reserva_pet, nunca os pets.
 - Calcular diárias como `(saída - entrada) + 1` e multiplicar pela tarifa aplicada. O banco não armazena total nem comprovação de pagamento.
 
-Portanto, esta etapa entrega a estrutura e suas garantias; não significa que todas as regras de negócio já estejam implementadas.
+Essas regras são executadas pela API; o schema sozinho não as garante. Consulte [as rotas e o funcionamento das transações](../backend/README.md). Escritas SQL diretas devem respeitar as mesmas regras.
 
 ## Executar os testes
 

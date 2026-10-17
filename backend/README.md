@@ -1,6 +1,6 @@
 # API PetzIn
 
-API de cadastros com PostgreSQL: CRUD de donos e pets, consulta e cadastro de espécies e listagem de canis. Reservas serão acrescentadas no próximo bloco.
+API com PostgreSQL: CRUD de donos e pets, espécies, canis, disponibilidade e reservas.
 
 ## Executar no Windows
 
@@ -36,6 +36,12 @@ Por padrão, a conexão usa localhost, porta 5432, banco petzin e usuário postg
 | GET /api/especies | Lista as espécies cadastradas. |
 | POST /api/especies | Cadastra espécie pelo nome, gerando código estável. |
 | GET /api/canis | Lista os 15 canis. |
+| GET /api/canis/disponiveis | Lista canis livres; exige data_entrada e data_saida na consulta. |
+| GET /api/reservas | Lista reservas ativas e canceladas com pets e cobrança. |
+| GET /api/reservas/{reserva_id} | Consulta uma reserva. |
+| POST /api/reservas | Reserva um canil para um ou dois pets. |
+| PUT /api/reservas/{reserva_id} | Altera canil, datas e pets de uma reserva ativa. |
+| DELETE /api/reservas/{reserva_id} | Cancela a reserva, mantendo o histórico; retorna 204. |
 
 Retornos: 200 para consulta/atualização, 201 para criação, 204 para exclusão, 404 para recurso ausente, 409 para conflito de integridade, 422 para entrada inválida e 503 para conexão indisponível. Mensagens internas do banco não são expostas.
 
@@ -43,14 +49,33 @@ PUT recebe todos os campos obrigatórios. Nomes têm espaços externos removidos
 
 Espécies com nome ou código equivalente são recusadas. Sinônimos exigem cuidado no cadastro. Pet com histórico de reserva pode corrigir nome e raça, mas não trocar dono ou espécie, preservando as regras de compartilhamento.
 
+## Reservas
+
+POST e PUT recebem canil_id, pet_ids (lista de um ou dois IDs), data_entrada e data_saida no formato AAAA-MM-DD. Exemplo de corpo:
+
+```json
+{"canil_id": 5, "pet_ids": [1, 2], "data_entrada": "2026-10-20", "data_saida": "2026-10-22"}
+```
+
+Os IDs dos pets devem existir. Dois pets só podem compartilhar se ambos forem cachorros do mesmo dono. Outras espécies ficam individualmente. A resposta contém diarias, tarifa_diaria e valor_total. Valores monetários são enviados como texto decimal para preservar centavos: "50.00" e "150.00", por exemplo.
+
+Entrada e saída contam na ocupação e na cobrança: 20 a 22 são três diárias; o canil só fica disponível a partir de 23. Datas iguais correspondem a uma diária. Datas passadas são aceitas, pois o enunciado não definiu proibição.
+
+A tarifa de novas reservas fica em TARIFA_DIARIA, no módulo reservas.py, inicialmente R$ 50. O valor aplicado é salvo na reserva. PUT recalcula os dias e o total com a tarifa original, mesmo que o valor para novas reservas tenha mudado. A API não recebe preço enviado pelo cliente.
+
+DELETE cancela e libera a ocupação; não apaga os vínculos com pets. Repetir o cancelamento retorna 204. Não há reativação nem edição de reserva cancelada; uma nova hospedagem exige nova reserva.
+
+A disponibilidade é uma consulta do momento, não uma garantia de vaga até a confirmação. Ao gravar, a API verifica novamente os conflitos. A transação bloqueia os pets em ordem de ID e grava reserva e vínculos juntos. A restrição de exclusão do PostgreSQL protege o canil contra sobreposição mesmo com solicitações concorrentes. O mesmo pet também não pode ocupar reservas ativas simultâneas em canis diferentes.
+
 ## Organização
 
 - `app/main.py`: inicia a aplicação, registra as rotas e trata indisponibilidade do banco.
 - `app/database.py`: abre conexão; usada com `with` para fechar e confirmar/desfazer a transação automaticamente.
 - `app/donos.py`, `pets.py`, `especies.py` e `canis.py`: rotas e SQL parametrizado por recurso.
 - `app/schemas.py`: validação de entrada e formatos de resposta.
+- `app/reservas.py`: rotas, validação de compartilhamento e conflitos, transações e cálculo da cobrança.
 
-Neste bloco, não há camadas de serviço ou repositórios genéricos. Regras complexas de reserva serão separadas quando forem implementadas. A consulta por ID usa parâmetros do Psycopg; o valor recebido não é concatenado no SQL.
+Não há camadas de serviço ou repositórios genéricos. As regras de reserva estão em funções do próprio módulo. Consultas usam parâmetros do Psycopg; valores recebidos não são concatenados no SQL.
 
 ## Testes
 

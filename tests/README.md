@@ -14,6 +14,7 @@ Execute na raiz do projeto, com PostgreSQL disponível:
 |---|---|
 | `backend/tests/test_cadastros.py` | Confere os fluxos de dono e pet, espécies, canis, validação de entrada e proteção de cadastros com vínculos. |
 | `backend/tests/test_donos.py` | Confere respostas básicas da API: saúde, recurso ausente, ID inválido e banco indisponível. |
+| `backend/tests/test_reservas.py` | Confere o ciclo de reserva, cobrança e preservação da tarifa, disponibilidade, cancelamento, compartilhamento, reversão de edição conflitante e concorrência de canil/pet. |
 | `tests/test_database.py` | Confere as regras de datas, tarifa, vínculos de reserva e ocupação dos canis, inclusive duas conexões disputando o mesmo canil. Também protege a migração que simplificou a identificação dos canis. |
 
 Os fluxos de CRUD seguem a sequência criar → consultar → editar → excluir. São uma forma de verificar o uso normal do cadastro do começo ao fim.
@@ -28,6 +29,6 @@ Os schemas de teste são removidos ao terminar. Os cadastros reais não são usa
 
 ## Limites atuais
 
-A suíte atual tem 35 casos executados, incluindo variações parametrizadas. Foram retirados casos repetidos entre API e banco, algumas verificações da estrutura interna e variações de erro de menor prioridade. Não houve mudança nas regras da aplicação.
+A suíte de cadastros foi reduzida de 59 para 35 casos executados. O bloco de reservas acrescenta 12 casos focados nas novas regras, totalizando 47, incluindo variações parametrizadas. Foram retirados casos repetidos entre API e banco, algumas verificações da estrutura interna e variações de erro de menor prioridade.
 
-As rotas de reservas ainda não estão implementadas. Os testes de banco sobre ocupação não substituem os futuros testes de compartilhamento, cobrança e reserva pela API.
+Os testes de banco protegem as restrições de ocupação; os de API verificam também compartilhamento, cobrança e gravação completa. A suíte não cobre todas as combinações possíveis de edições e cancelamentos concorrentes.
