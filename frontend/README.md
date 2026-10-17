@@ -56,3 +56,5 @@ Usar banco isolado ou registros de demonstração para estas verificações:
 7. Alternar seções com formulário preenchido, navegar por teclado e conferir a tabela em tela estreita.
 
 Esses fluxos foram conferidos em navegador com um schema PostgreSQL exclusivo, removido ao terminar. Não foi acrescentada uma suíte de testes de componentes; os testes automatizados do backend continuam cobrindo suas regras.
+
+`pnpm test` executa um teste de regressão do cliente HTTP: resposta HTML no lugar de JSON deve gerar mensagem de erro, em vez de causar tela branca. Depois de trocar branches com o Vite aberto, reinicie o servidor e confira o navegador, pois a troca temporária dos arquivos de configuração pode afetar o encaminhamento da API.

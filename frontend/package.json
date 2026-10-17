@@ -6,6 +6,7 @@
   "packageManager": "pnpm@11.25.0",
   "engines": { "node": ">=22.12.0" },
   "scripts": {
+    "test": "node --test src/api.test.js",
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1"

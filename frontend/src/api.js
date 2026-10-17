@@ -10,6 +10,9 @@ export async function api(path, options = {}) {
   }
   if (response.status === 204) return null;
   const body = await response.json().catch(() => null);
+  if (response.ok && body === null) {
+    throw new Error('A API retornou uma resposta inválida. Confira se a interface está conectada ao backend e tente atualizar os dados.');
+  }
   if (!response.ok) {
     let message = body?.detail;
     if (Array.isArray(message)) {
