@@ -35,7 +35,7 @@ function App() {
     return () => controller.abort();
   }, []);
 
-  async function execute(path, method, body, success) {
+  async function execute(path, method, body, success, onError) {
     setBusy(true); setMessage(null);
     try {
       await api(path, { method, ...(body !== null ? { body: JSON.stringify(body) } : {}) });
@@ -44,7 +44,8 @@ function App() {
       catch { setMessage({ error: true, text: `${success} A lista não pôde ser atualizada. Clique em Atualizar dados.` }); }
       return true;
     } catch (error) {
-      setMessage({ error: true, text: error.message });
+      if (onError) onError(error.message);
+      else setMessage({ error: true, text: error.message });
       return false;
     } finally { setBusy(false); }
   }

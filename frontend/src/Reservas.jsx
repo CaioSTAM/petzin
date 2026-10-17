@@ -46,10 +46,11 @@ export default function Reservas({ data, execute, busy }) {
     <h3>{id ? `Editar reserva #${id}` : 'Cadastrar reserva'}</h3>
     <form onSubmit={async (event) => {
       event.preventDefault();
+      setError('');
       if (!validDates()) return;
       if (!form.pet_ids.length) { setError('Selecione pelo menos um pet.'); return; }
       const { dono_id, ...body } = form;
-      if (await execute(`reservas${id ? `/${id}` : ''}`, id ? 'PUT' : 'POST', { ...body, canil_id: Number(body.canil_id) }, 'Reserva salva.')) clear();
+      if (await execute(`reservas${id ? `/${id}` : ''}`, id ? 'PUT' : 'POST', { ...body, canil_id: Number(body.canil_id) }, 'Reserva salva.', setError)) clear();
     }}>
       <div className="fields">
         <Field label="Dono dos pets"><select ref={firstField} required value={form.dono_id} onChange={(e) => change({ dono_id: e.target.value, pet_ids: [] })}>
