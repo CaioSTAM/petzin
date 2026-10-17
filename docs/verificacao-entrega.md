@@ -33,3 +33,4 @@ Fonte: PDF completo docs/desafio 3.pdf, incluindo o e-mail da cliente. Esta conf
 - Suíte atual: 49 casos de banco/API aprovados. Inclui hotel lotado, prontidão com banco disponível e retorno 503 quando indisponível, mantendo /health acessível.
 - Depois das melhorias de legibilidade e mensagens, conferi os formulários no navegador com banco isolado. O teste do cliente HTTP e o build React passaram.
 - Compose reconstruído e iniciado com os três serviços saudáveis; /ready retornou 200 após consultar o banco. Os volumes existentes foram preservados.
+- Após separar os passos de preparação da reserva, os 49 casos passaram. Os dois cenários de criação simultânea (mesmo canil e mesmo pet em canis diferentes) foram repetidos oito vezes, todos aprovados. A ordem dos bloqueios e a transação foram preservadas.

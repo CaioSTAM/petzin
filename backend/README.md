@@ -76,7 +76,7 @@ A disponibilidade é uma consulta do momento, não uma garantia de vaga até a c
 - `app/schemas.py`: validação de entrada e formatos de resposta.
 - `app/reservas.py`: rotas, validação de compartilhamento e conflitos, transações e cálculo da cobrança.
 
-Optei por manter as regras de reserva em funções do próprio módulo, sem criar camadas de serviço ou repositórios genéricos. Usei parâmetros do Psycopg nas consultas, sem concatenar os valores recebidos no SQL.
+Optei por manter as regras de reserva em funções do próprio módulo, sem criar camadas de serviço ou repositórios genéricos. `preparar_gravacao_reserva` coordena quatro passos: bloquear canis, bloquear pets, validar participantes e verificar conflitos. Todos usam a conexão e a transação do endpoint. Usei parâmetros do Psycopg nas consultas, sem concatenar os valores recebidos no SQL.
 
 ## Testes
 
