@@ -302,6 +302,16 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Status:** decisões técnicas aplicadas na API em 17/10/2026, sem representar novos requisitos confirmados pela cliente.
 
+### 18. Escopo dos testes
+
+**Dúvida:** a suíte estava mais detalhada do que o necessário para uma entrega simples e dificultava o estudo do projeto.
+
+**Escolha:** priorizar fluxos completos de cadastro, erros representativos e regras de integridade. Retirar testes SQL de situações já exercitadas pela API com PostgreSQL, algumas inspeções da estrutura interna e variações de erro de menor prioridade. Preservar a regressão do caractere nulo, a migração com reserva vinculada e a disputa simultânea por canil.
+
+**Trade-off:** menos detalhamento por camada e menos combinações de erros. A redução não muda as validações da aplicação nem significa cobertura exaustiva. O guia tests/README.md registra o propósito dos grupos e os limites atuais.
+
+**Status:** simplificação solicitada pelo candidato em 17/10/2026. A suíte passou de 59 para 35 casos executados; as contagens anteriores neste documento registram verificações históricas.
+
 ## Pontos para consolidar antes das respectivas implementações
 
 - Confirmar o uso interno antes de desenhar fluxos de acesso; não acrescentar autenticação silenciosamente.

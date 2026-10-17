@@ -60,6 +60,8 @@ Neste bloco, não há camadas de serviço ou repositórios genéricos. Regras co
 
 Esse comando executa os testes de banco e API. Os testes de API criam schemas exclusivos, aplicam a estrutura e removem seus schemas ao terminar. Usam registros fictícios, sem alterar os cadastros reais. Precisam de PostgreSQL acessível e permissão de criar schemas/extensão no banco local.
 
+O [guia dos testes](../tests/README.md) explica o propósito de cada grupo e os limites da cobertura. A suíte foi simplificada para priorizar fluxos completos e regras de integridade.
+
 Os testes de IDs inválidos usam uma conexão propositalmente indisponível para verificar que a entrada é recusada antes de abrir a conexão. O teste de indisponibilidade usa o mesmo princípio para conferir a resposta 503.
 
 O TestClient usa httpx2, conforme a versão de Starlette instalada. Essa dependência é somente de desenvolvimento.

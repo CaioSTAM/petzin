@@ -25,41 +25,32 @@ def add_history(pet_id):
         connection.execute("INSERT INTO reserva_pet VALUES (%s, %s)", (reservation_id, pet_id))
 
 
-def test_create_owner_normalizes_input(client, database):
+def test_owner_crud_normalizes_input(client, database):
     response = client.post("/api/donos", json={"nome": "  Outro tutor  ", "telefone": "+55 (92) 99999-9999"})
     assert response.status_code == 201
     owner = response.json()
     assert owner["nome"] == "Outro tutor"
     assert owner["telefone"] == "+5592999999999"
     assert client.get(f"/api/donos/{owner['id']}").json() == owner
+    assert owner in client.get("/api/donos").json()
+    updated = client.put(
+        f"/api/donos/{owner['id']}",
+        json={"nome": "Tutor atualizado", "telefone": "+5592888888888"},
+    )
+    assert updated.status_code == 200
+    assert updated.json() == {"id": owner["id"], "nome": "Tutor atualizado", "telefone": "+5592888888888"}
+    assert client.get(f"/api/donos/{owner['id']}").json() == updated.json()
+    deleted = client.delete(f"/api/donos/{owner['id']}")
+    assert deleted.status_code == 204 and deleted.content == b""
+    assert client.get(f"/api/donos/{owner['id']}").status_code == 404
 
 
 @pytest.mark.parametrize("body", [
     {"nome": "   ", "telefone": "+5592999999999"},
     {"nome": "Tutor", "telefone": "abc"},
-    {"nome": "Tutor"},
-    {"nome": "Tutor", "telefone": "+5592999999999", "id": 100},
 ])
 def test_invalid_owner_input_is_rejected(client, database, body):
     assert client.post("/api/donos", json=body).status_code == 422
-
-
-def test_update_owner_preserves_identity(client, database):
-    response = client.put(f"/api/donos/{database}", json={"nome": "Tutor atualizado", "telefone": "+5592888888888"})
-    assert response.status_code == 200
-    assert response.json() == {"id": database, "nome": "Tutor atualizado", "telefone": "+5592888888888"}
-    assert client.get(f"/api/donos/{database}").json() == response.json()
-
-
-def test_update_missing_owner_returns_404(client, database):
-    assert client.put("/api/donos/999999", json={"nome": "Tutor", "telefone": "+5592999999999"}).status_code == 404
-
-
-def test_delete_owner_without_pets(client, database):
-    response = client.delete(f"/api/donos/{database}")
-    assert response.status_code == 204
-    assert response.content == b""
-    assert client.get(f"/api/donos/{database}").status_code == 404
 
 
 def test_delete_owner_with_pet_returns_409(client, database):
@@ -134,13 +125,6 @@ def test_pet_with_history_cannot_change_relationship_but_can_correct_name(client
     assert corrected.json()["especie_id"] == 1
 
 
-@pytest.mark.parametrize("resource", ["donos", "pets"])
-def test_delete_nonexistent_record_returns_404(client, database, resource):
-    response = client.delete(f"/api/{resource}/999999")
-    assert response.status_code == 404
-    assert response.json()["detail"] == ("Dono não encontrado." if resource == "donos" else "Pet não encontrado.")
-
-
 def test_pet_without_history_can_change_species(client, database):
     pet_id = saved_pet(client, database)
     response = client.put(f"/api/pets/{pet_id}", json=pet_payload(database, especie_id=2))
@@ -153,13 +137,7 @@ def test_put_requires_complete_editable_owner_data(client, database):
     assert client.get(f"/api/donos/{database}").json()["nome"] == "Tutor de teste"
 
 
-@pytest.mark.parametrize("resource,field", [("donos", "nome"), ("pets", "nome"), ("pets", "raca"), ("especies", "nome")])
-def test_null_character_in_text_returns_422(database, resource, field):
-    payloads = {
-        "donos": {"nome": "Tutor", "telefone": "+5592999999999"},
-        "pets": pet_payload(database),
-        "especies": {"nome": "Animal de teste"},
-    }
-    body = payloads[resource] | {field: "Texto\u0000inválido"}
+def test_null_character_in_text_returns_422(database):
+    body = {"nome": "Texto\u0000inválido", "telefone": "+5592999999999"}
     with TestClient(app, raise_server_exceptions=False) as client:
-        assert client.post(f"/api/{resource}", json=body).status_code == 422
+        assert client.post("/api/donos", json=body).status_code == 422

@@ -70,12 +70,6 @@ class DatabaseTests(unittest.TestCase):
         FROM canil WHERE id = {kennel};
         """
 
-    def test_fifteen_identifiable_kennels_exist(self):
-        self.succeeds("SELECT count(*), min(id), max(id) FROM canil;", "15|1|15")
-
-    def test_kennel_identifier_is_the_only_column_and_is_explicit(self):
-        self.succeeds("SELECT column_name, is_identity FROM information_schema.columns WHERE table_schema=current_schema() AND table_name='canil';", "id|NO")
-
     def test_kennel_identifier_outside_hotel_capacity_is_rejected(self):
         self.rejects("INSERT INTO canil (id) VALUES (16);", "23514")
 
@@ -98,16 +92,6 @@ class DatabaseTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip(), "5|5\nid|NO")
 
-    def test_simplification_rejects_mismatched_identifiers(self):
-        migration = SIMPLIFICATION.read_text(encoding="utf-8") if SIMPLIFICATION.exists() else ""
-        legacy = """
-        CREATE TABLE canil (id INTEGER PRIMARY KEY, numero INTEGER NOT NULL UNIQUE);
-        INSERT INTO canil VALUES (1, 5);
-        """
-        result = self.execute(migration, ddl=legacy)
-        self.assertNotEqual(result.returncode, 0, "Migração aceitou identificação divergente")
-        self.assertIn("P0001", result.stderr)
-
     def test_species_seed_has_stable_dog_code(self):
         self.succeeds("SELECT nome FROM especie WHERE codigo = 'cachorro';", "Cachorro")
 
@@ -117,24 +101,6 @@ class DatabaseTests(unittest.TestCase):
         SELECT count(*), count(DISTINCT id) FROM dono WHERE nome = 'Repetido';
         """, "2|2")
 
-    def test_blank_owner_name_is_rejected(self):
-        self.rejects("INSERT INTO dono (nome, telefone) VALUES ('   ', '123');", "23514")
-
-    def test_equivalent_species_name_is_rejected(self):
-        self.rejects("INSERT INTO especie (codigo, nome) VALUES ('duplicada', '  cOeLhO  ');", "23505")
-
-    def test_pet_with_nonexistent_owner_is_rejected(self):
-        self.rejects("INSERT INTO pet (nome, dono_id, especie_id) SELECT 'Teste', -1, id FROM especie WHERE codigo='gato';", "23503")
-
-    def test_pet_with_nonexistent_species_is_rejected(self):
-        self.rejects("INSERT INTO dono (nome, telefone) VALUES ('Teste A', '123'); INSERT INTO pet (nome, dono_id, especie_id) SELECT 'Teste', id, -1 FROM dono;", "23503")
-
-    def test_breed_can_be_unknown(self):
-        self.succeeds(self.fixtures() + "SELECT raca IS NULL FROM pet;", "t")
-
-    def test_referenced_owner_cannot_be_deleted(self):
-        self.rejects(self.fixtures() + "DELETE FROM dono WHERE nome='Teste A';", "23001")
-
     def test_same_day_stay_is_allowed_and_rate_is_exact(self):
         self.succeeds(self.reserve(end="2026-10-20") + "SELECT data_saida = data_entrada, tarifa_diaria::text FROM reserva;", "t|50.00")
 
@@ -143,9 +109,6 @@ class DatabaseTests(unittest.TestCase):
 
     def test_nonpositive_rate_is_rejected(self):
         self.rejects(self.reserve(rate="0"), "23514")
-
-    def test_invalid_status_is_rejected(self):
-        self.rejects(self.reserve(status="desconhecida"), "23514")
 
     def test_same_day_as_departure_conflicts(self):
         self.rejects(self.reserve() + self.reserve(start="2026-10-22", end="2026-10-24"), "23P01")
@@ -162,9 +125,6 @@ class DatabaseTests(unittest.TestCase):
     def test_duplicate_pet_reservation_link_is_rejected(self):
         link = "INSERT INTO reserva_pet (reserva_id, pet_id) SELECT r.id, p.id FROM reserva r CROSS JOIN pet p;"
         self.rejects(self.fixtures() + self.reserve() + link + link, "23505")
-
-    def test_referenced_pet_cannot_be_deleted(self):
-        self.rejects(self.fixtures() + self.reserve() + "INSERT INTO reserva_pet SELECT r.id, p.id FROM reserva r CROSS JOIN pet p; DELETE FROM pet;", "23001")
 
     def test_updating_reservation_cannot_create_conflict(self):
         self.rejects(self.reserve() + self.reserve(start="2026-10-24", end="2026-10-25") + "UPDATE reserva SET data_entrada='2026-10-22' WHERE data_entrada='2026-10-24';", "23P01")
