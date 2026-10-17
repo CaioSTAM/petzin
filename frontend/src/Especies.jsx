@@ -3,9 +3,19 @@ import { Field, Table } from "./components";
 
 export default function Especies({ data, execute, busy }) {
   const [nome, setNome] = useState("");
+  const [error, setError] = useState("");
   async function salvarEspecie(event) {
     event.preventDefault();
-    if (await execute("especies", "POST", { nome }, "Espécie cadastrada."))
+    setError("");
+    if (
+      await execute(
+        "especies",
+        "POST",
+        { nome },
+        "Espécie cadastrada.",
+        setError,
+      )
+    )
       setNome("");
   }
   return (
@@ -23,6 +33,11 @@ export default function Especies({ data, execute, busy }) {
             onChange={(e) => setNome(e.target.value)}
           />
         </Field>
+        {error && (
+          <p role="alert" className="error">
+            {error}
+          </p>
+        )}
         <button disabled={busy}>
           {busy ? "Salvando…" : "Cadastrar espécie"}
         </button>

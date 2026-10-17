@@ -6,24 +6,29 @@ const empty = { nome: "", telefone: "" };
 export default function Donos({ data, execute, busy }) {
   const [form, setForm] = useState(empty);
   const [id, setId] = useState(null);
+  const [error, setError] = useState("");
   const firstField = useRef(null);
   function limparFormulario() {
+    setError("");
     setForm(empty);
     setId(null);
   }
   async function salvarDono(event) {
     event.preventDefault();
+    setError("");
     if (
       await execute(
         `donos${id ? `/${id}` : ""}`,
         id ? "PUT" : "POST",
         form,
         "Dono salvo.",
+        setError,
       )
     )
       limparFormulario();
   }
   function iniciarEdicao(dono) {
+    setError("");
     setId(dono.id);
     setForm({ nome: dono.nome, telefone: dono.telefone });
     firstField.current.focus();
@@ -62,6 +67,11 @@ export default function Donos({ data, execute, busy }) {
             />
           </Field>
         </div>
+        {error && (
+          <p role="alert" className="error">
+            {error}
+          </p>
+        )}
         <FormActions editing={id} busy={busy} onClear={limparFormulario} />
       </form>
       <h3>Donos cadastrados</h3>

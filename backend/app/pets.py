@@ -1,3 +1,5 @@
+from psycopg.errors import ForeignKeyViolation, RestrictViolation
+
 from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, Query, Response
@@ -67,8 +69,11 @@ def atualizar_pet(pet_id: IdPath, dados: PetInput):
 
 @router.delete("/{pet_id}", status_code=204)
 def excluir_pet(pet_id: IdPath):
-    with get_connection() as connection:
-        pet = connection.execute("DELETE FROM pet WHERE id=%s RETURNING id", (pet_id,)).fetchone()
-        if pet is None:
-            raise HTTPException(status_code=404, detail="Pet não encontrado.")
+    try:
+        with get_connection() as connection:
+            pet = connection.execute("DELETE FROM pet WHERE id=%s RETURNING id", (pet_id,)).fetchone()
+            if pet is None:
+                raise HTTPException(status_code=404, detail="Pet não encontrado.")
+    except (ForeignKeyViolation, RestrictViolation) as erro:
+        raise HTTPException(status_code=409, detail="Este pet possui histórico de reservas e não pode ser excluído.") from erro
     return Response(status_code=204)

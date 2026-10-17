@@ -6,6 +6,7 @@ const empty = { nome: "", dono_id: "", especie_id: "", raca: "" };
 export default function Pets({ data, execute, busy }) {
   const [form, setForm] = useState(empty);
   const [id, setId] = useState(null);
+  const [error, setError] = useState("");
   const [other, setOther] = useState(false);
   const firstField = useRef(null);
   const especiesPrincipais = data.especies.filter((especie) =>
@@ -15,12 +16,14 @@ export default function Pets({ data, execute, busy }) {
     (especie) => !["cachorro", "gato"].includes(especie.codigo),
   );
   function limparFormulario() {
+    setError("");
     setForm(empty);
     setId(null);
     setOther(false);
   }
   async function salvarPet(event) {
     event.preventDefault();
+    setError("");
     const dadosPet = {
       ...form,
       dono_id: Number(form.dono_id),
@@ -33,11 +36,13 @@ export default function Pets({ data, execute, busy }) {
         id ? "PUT" : "POST",
         dadosPet,
         "Pet salvo.",
+        setError,
       )
     )
       limparFormulario();
   }
   function iniciarEdicao(pet) {
+    setError("");
     setId(pet.id);
     setForm({
       nome: pet.nome,
@@ -136,6 +141,11 @@ export default function Pets({ data, execute, busy }) {
             />
           </Field>
         </div>
+        {error && (
+          <p role="alert" className="error">
+            {error}
+          </p>
+        )}
         <FormActions editing={id} busy={busy} onClear={limparFormulario} />
       </form>
       <h3>Pets cadastrados</h3>

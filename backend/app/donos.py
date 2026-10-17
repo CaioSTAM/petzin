@@ -1,3 +1,5 @@
+from psycopg.errors import ForeignKeyViolation, RestrictViolation
+
 from fastapi import APIRouter, HTTPException, Response
 
 from app.database import get_connection
@@ -47,8 +49,11 @@ def atualizar_dono(dono_id: IdPath, dados: DonoInput):
 
 @router.delete("/{dono_id}", status_code=204)
 def excluir_dono(dono_id: IdPath):
-    with get_connection() as connection:
-        dono = connection.execute("DELETE FROM dono WHERE id=%s RETURNING id", (dono_id,)).fetchone()
-        if dono is None:
-            raise HTTPException(status_code=404, detail="Dono não encontrado.")
+    try:
+        with get_connection() as connection:
+            dono = connection.execute("DELETE FROM dono WHERE id=%s RETURNING id", (dono_id,)).fetchone()
+            if dono is None:
+                raise HTTPException(status_code=404, detail="Dono não encontrado.")
+    except (ForeignKeyViolation, RestrictViolation) as erro:
+        raise HTTPException(status_code=409, detail="Este dono possui pets cadastrados e não pode ser excluído.") from erro
     return Response(status_code=204)

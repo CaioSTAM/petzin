@@ -55,7 +55,9 @@ def test_invalid_owner_input_is_rejected(client, database, body):
 
 def test_delete_owner_with_pet_returns_409(client, database):
     saved_pet(client, database)
-    assert client.delete(f"/api/donos/{database}").status_code == 409
+    response = client.delete(f"/api/donos/{database}")
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Este dono possui pets cadastrados e não pode ser excluído."
     assert client.get(f"/api/donos/{database}").status_code == 200
 
 
@@ -106,7 +108,9 @@ def test_nonexistent_pet_reference_returns_404(client, database, field):
 def test_pet_with_history_cannot_be_deleted(client, database):
     pet_id = saved_pet(client, database)
     add_history(pet_id)
-    assert client.delete(f"/api/pets/{pet_id}").status_code == 409
+    response = client.delete(f"/api/pets/{pet_id}")
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Este pet possui histórico de reservas e não pode ser excluído."
     assert client.get(f"/api/pets/{pet_id}").status_code == 200
 
 
