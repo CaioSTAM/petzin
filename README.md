@@ -150,7 +150,7 @@ Com ambiente Python de desenvolvimento e PostgreSQL local preparados:
 & .\.venv\Scripts\python.exe -X utf8 -m pytest -q
 ```
 
-São 47 casos de banco/API, com schemas isolados e registros fictícios. Dentro de frontend, `pnpm test` confere a regressão de resposta inválida e `pnpm build` verifica o build. Consulte o [guia dos testes](tests/README.md) e a [conferência da entrega](docs/verificacao-entrega.md).
+São 49 casos de banco/API, com schemas isolados e registros fictícios. Dentro de frontend, `pnpm test` confere a regressão de resposta inválida e `pnpm build` verifica o build. Consulte o [guia dos testes](tests/README.md) e a [conferência da entrega](docs/verificacao-entrega.md).
 
 Conferi a configuração Compose, o build das imagens, a subida com banco vazio, a interface no navegador, a integração com a API e a preservação de registros após down/up. Mantive os dados de teste em uma instalação Docker separada. Também conferi a execução local sem Docker.
 

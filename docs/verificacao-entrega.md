@@ -14,12 +14,12 @@ Fonte: PDF completo docs/desafio 3.pdf, incluindo o e-mail da cliente. Esta conf
 | Compartilhamento de até dois cachorros da mesma família | Verificação de quantidade, código da espécie e mesmo dono; suposição de família documentada. |
 | Entrada e saída | Datas validadas; contagem inclusiva escolhida e documentada. |
 | Preço fixo por canil/dia | Decimal, tarifa aplicada preservada e total calculado por diárias. R$ 50 é exemplo escolhido. |
-| Recusar quando não houver vaga no período | Consulta de disponibilidade e proteção de conflitos na gravação; restrição de exclusão no banco. |
+| Recusar quando não houver vaga no período | Teste com os 15 canis ocupados, disponibilidade vazia e recusa da reserva adicional; proteção de conflitos na gravação. |
 | Datas inválidas e IDs inexistentes | Respostas 422 e 404; conflitos 409 e indisponibilidade 503. |
-| Qualidade e organização | Módulos por recurso, SQL parametrizado, componentes por seção e funções auxiliares pequenas. |
+| Qualidade e organização | Módulos por recurso, SQL parametrizado, componentes por seção, handlers nomeados e funções auxiliares pequenas. |
 | Repositório público | https://github.com/CaioSTAM/petzin, commits por bloco e revisão antes de integrar. |
 | README com instalação, execução, tecnologias e análise | README central e instruções detalhadas de backend, frontend e banco. |
-| Docker como diferencial | Compose, Dockerfiles, Nginx e inicialização automática; imagens construídas e três serviços executados com volume vazio. |
+| Docker como diferencial | Compose, Dockerfiles, Nginx e inicialização automática; imagens construídas, três serviços executados com volume vazio e prontidão da API com consulta ao banco. |
 
 ## Verificações de funcionamento
 
@@ -30,12 +30,6 @@ Fonte: PDF completo docs/desafio 3.pdf, incluindo o e-mail da cliente. Esta conf
 - Pelo Nginx, criados um dono, dois pets e uma reserva de três diárias, com total de R$ 150. Conflito de pet retornou 409; período invertido retornou 422; disponibilidade conferida. Build React aberto no navegador, exibindo a reserva sem erros de execução.
 - Após `down` sem remover volume e novo `up`, dono e reserva permaneceram. Cancelamento manteve histórico e liberou a vaga.
 - O repositório foi consultado pela API pública do GitHub: público, com main como branch padrão.
-- Na revisão final, um teste concorrente detectou impasse entre inserções na restrição de exclusão. A gravação passou a bloquear os canis em ordem de ID antes dos pets e da validação de conflitos. Após a correção, 47 testes passaram e os dois cenários concorrentes foram repetidos oito vezes, sem falhas. O teste do cliente HTTP e o build React também passaram.
-
-## Ambiente Docker recuperado antes da validação
-
-Em 17/10/2026, o Docker Desktop inicialmente não iniciou. O bootstrap apresentou WSL_E_DISTRO_NOT_FOUND para docker-desktop; a lista WSL mostrava apenas Ubuntu. Uma reinicialização normal terminou por timeout.
-
-O disco interno existente foi registrado novamente no WSL. Um disco de dados anexado pela tentativa anterior foi desanexado com o Docker parado e o aplicativo reiniciado. Nenhum disco, volume ou distribuição foi apagado. O motor Linux então iniciou e as verificações de execução acima foram realizadas.
-
-O problema de ambiente foi resolvido antes da entrega. O erro inicial não era causado pelo Compose do projeto. A instalação de teste usa um nome de projeto exclusivo para permitir sua remoção sem tocar em outros containers ou nos cadastros do PostgreSQL local.
+- Suíte atual: 49 casos de banco/API aprovados. Inclui hotel lotado, prontidão com banco disponível e retorno 503 quando indisponível, mantendo /health acessível.
+- Depois das melhorias de legibilidade e mensagens, conferi os formulários no navegador com banco isolado. O teste do cliente HTTP e o build React passaram.
+- Compose reconstruído e iniciado com os três serviços saudáveis; /ready retornou 200 após consultar o banco. Os volumes existentes foram preservados.
