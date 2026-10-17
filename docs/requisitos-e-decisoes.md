@@ -286,6 +286,8 @@ Fonte do desafio: [PDF completo](<desafio 3.pdf>). Prazo informado pelo candidat
 
 **Status:** repositório e commits autorizados pelo candidato em 17/10/2026. Sem alteração artificial de datas do histórico.
 
+**Fluxo de integração atualizado:** por ser um projeto individual, os próximos blocos não precisam de pull request. Antes de cada merge na main, revisar o código, corrigir os problemas encontrados e executar os testes; conferir novamente o resultado integrado antes de publicar. O PR inicial de cadastros foi fechado a pedido do candidato, mantendo o histórico do GitHub.
+
 ### 17. Validação e alterações dos cadastros
 
 **Dúvidas:** qual formato de telefone aceitar? Como gerar códigos de espécies? Permitir trocar dono ou espécie de um pet que já participou de reservas?
