@@ -59,6 +59,29 @@ def test_availability_respects_inclusive_dates_and_cancellation(client, database
     assert available("2026-10-22") == list(range(1, 16))
 
 
+def test_full_hotel_has_no_availability_and_rejects_another_booking(client, database):
+    for canil_id in range(1, 16):
+        response = client.post(
+            "/api/reservas", json=booking([pet(client, database)], canil_id=canil_id),
+        )
+        assert response.status_code == 201
+
+    availability = client.get(
+        "/api/canis/disponiveis",
+        params={"data_entrada": "2026-10-20", "data_saida": "2026-10-22"},
+    )
+    assert availability.status_code == 200
+    assert availability.json() == []
+
+    # Outro pet garante que a recusa ocorre pela ocupação do canil.
+    rejected = client.post("/api/reservas", json=booking([pet(client, database)]))
+    assert rejected.status_code == 409
+    assert rejected.json()["detail"] == "Canil ou pet já reservado nesse período."
+    reservations = client.get("/api/reservas").json()
+    assert len(reservations) == 15
+    assert {reservation["canil_id"] for reservation in reservations} == set(range(1, 16))
+
+
 @pytest.mark.parametrize("case", ["tres_pets", "gatos", "donos_diferentes"])
 def test_invalid_sharing_leaves_no_reservation(client, database, case):
     owner = database
