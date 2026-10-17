@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+pgpass.conf
+*.dump
+.pytest_cache/
+node_modules/
+frontend/dist/
