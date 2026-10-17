@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 import psycopg
 
+from app.database import get_connection
 from app.donos import router as donos_router
 from app.pets import router as pets_router
 from app.especies import router as especies_router
@@ -41,3 +42,10 @@ def database_unavailable(request, exception):
 @app.get("/health", tags=["Sistema"])
 def health():
     return {"status": "ok"}
+
+
+@app.get("/ready", tags=["Sistema"])
+def readiness():
+    with get_connection() as connection:
+        connection.execute("SELECT 1").fetchone()
+    return {"status": "ready"}

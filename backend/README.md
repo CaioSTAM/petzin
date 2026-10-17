@@ -23,6 +23,7 @@ Por padrão, a conexão usa localhost, porta 5432, banco petzin e usuário postg
 | Método e caminho | Comportamento |
 |---|---|
 | GET /health | Confirma que a API está respondendo; não verifica o banco. |
+| GET /ready | Verifica a conexão com o banco com SELECT 1; retorna 503 em caso de indisponibilidade. |
 | GET /api/donos | Lista donos por ID. |
 | GET /api/donos/{dono_id} | Consulta um dono com ID inteiro positivo. |
 | POST /api/donos | Cadastra dono com nome e telefone. |

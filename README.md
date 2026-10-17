@@ -27,6 +27,7 @@ A primeira execução baixa imagens e instala dependências; pode demorar alguns
 | Interface React | http://localhost:8080 |
 | Documentação da API | http://localhost:8002/docs |
 | Saúde do processo da API | http://localhost:8002/health |
+| Prontidão da API e conexão com o banco | http://localhost:8002/ready |
 
 O banco é inicializado com cinco espécies e os 15 canis. Donos, pets e reservas começam vazios. Cadastre um dono, depois os pets e então uma reserva.
 
@@ -64,7 +65,7 @@ docker compose up --build -d --wait
 
 O SQL de inicialização só roda com o volume vazio. Mudar DB_PASSWORD no `.env` não muda a senha de um banco já criado: mantenha a senha original ou recrie o volume de demonstração, sabendo que isso apaga seus dados. A migração 002 é apenas para instalações antigas com canil.numero; instalações novas aplicam somente 001.
 
-Se a interface não abrir, confira `docker compose ps`, os logs e se a porta escolhida está livre. Se o comando não conectar ao Docker, aguarde o motor Linux do Docker Desktop iniciar. /health verifica o processo da API; falhas do banco são tratadas separadamente, com resposta 503 nas operações.
+Se a interface não abrir, confira `docker compose ps`, os logs e se a porta escolhida está livre. Se o comando não conectar ao Docker, aguarde o motor Linux do Docker Desktop iniciar. `/health` verifica o processo da API. `/ready` abre uma conexão e executa `SELECT 1`; retorna 503 se o banco estiver indisponível ou a autenticação falhar. O Docker usa `/ready` antes de iniciar a interface.
 
 ## Tecnologias
 
